@@ -28,6 +28,9 @@ jobs:
           HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
           echo "Pull request merged from: $HEAD_BRANCH → $BASE_BRANCH"
 
+          # Get all submodule paths sorted by depth (deepest first)
+          SUBMODULES=$(git config --file .gitmodules --get-regexp path | awk '{print $2}' | tac)
+
           merge_submodules() {
             local SUBMODULE_PATH=$1
             cd "$SUBMODULE_PATH"
@@ -77,9 +80,9 @@ jobs:
           }
 
           # Start merging from the deepest submodules first
-          git submodule foreach --quiet '
-            SUB_PATH=$sm_path
+          for SUB in $SUBMODULES; do
+            SUB_PATH="$SUB"
             merge_submodules "$SUB_PATH"
-          '
+          done
 
           echo "✅ All submodules and main repository updated successfully."
