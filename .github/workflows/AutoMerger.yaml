@@ -39,6 +39,9 @@ jobs:
             # Fetch latest updates
             git fetch origin $BASE_BRANCH || echo "Base branch fetch failed"
             git fetch origin $HEAD_BRANCH || echo "Head branch fetch failed"
+            git branch --track $BASE_BRANCH origin/$BASE_BRANCH 2>/dev/null || true
+            git branch --track $HEAD_BRANCH origin/$HEAD_BRANCH 2>/dev/null || true
+
 
             # Check if both HEAD and BASE branches exist in the submodule
             if git show-ref --verify --quiet refs/heads/$BASE_BRANCH && git show-ref --verify --quiet refs/heads/$HEAD_BRANCH; then
@@ -51,6 +54,40 @@ jobs:
               git submodule update --init --recursive
               git submodule foreach --quiet '
                 SUB_PATH=$sm_path
+                merge_submodules() {
+                    local SUBMODULE_PATH=$1
+                    cd "$SUBMODULE_PATH"
+                    echo "Processing submodule: $SUBMODULE_PATH"
+        
+                    # Fetch latest updates
+                    git fetch origin $BASE_BRANCH || echo "Base branch fetch failed"
+                    git fetch origin $HEAD_BRANCH || echo "Head branch fetch failed"
+                    git branch --track $BASE_BRANCH origin/$BASE_BRANCH 2>/dev/null || true
+                    git branch --track $HEAD_BRANCH origin/$HEAD_BRANCH 2>/dev/null || true
+        
+        
+                    # Check if both HEAD and BASE branches exist in the submodule
+                    if git show-ref --verify --quiet refs/heads/$BASE_BRANCH && git show-ref --verify --quiet refs/heads/$HEAD_BRANCH; then
+                      echo "Both branches exist in submodule: $SUBMODULE_PATH"
+                      
+                      # Checkout BASE and attempt to merge HEAD into it
+                      git checkout $BASE_BRANCH
+        
+                      if ! git merge origin/$HEAD_BRANCH --no-edit; then
+                        echo "❌ Merge conflict detected in $SUBMODULE_PATH/$BASE_BRANCH. Aborting process!"
+                        exit 1  # Stop the entire workflow if a conflict occurs
+                      fi
+        
+                      # Push changes
+                      git push origin $BASE_BRANCH
+                      echo "✅ Successfully merged $HEAD_BRANCH into $BASE_BRANCH in submodule: $SUBMODULE_PATH"
+                    else
+                      echo "Skipping submodule: $SUBMODULE_PATH as one or both branches are missing."
+                    fi
+        
+                    cd ..
+                }
+                
                 merge_submodules "$SUB_PATH"
               '
               commit_and_push_parent "$SUBMODULE_PATH"
