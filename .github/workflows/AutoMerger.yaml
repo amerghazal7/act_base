@@ -60,10 +60,10 @@ jobs:
                     echo "Processing submodule: $SUBMODULE_PATH"
         
                     # Fetch latest updates
-                    git fetch origin $BASE_BRANCH || echo "Base branch fetch failed"
-                    git fetch origin $HEAD_BRANCH || echo "Head branch fetch failed"
-                    git branch --track $BASE_BRANCH origin/$BASE_BRANCH 2>/dev/null || true
-                    git branch --track $HEAD_BRANCH origin/$HEAD_BRANCH 2>/dev/null || true
+                    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+                    git fetch --all
+                    git branch -r | grep -q $BASE_BRANCH || echo "Base branch fetch failed"
+                    git branch -r | grep -q $HEAD_BRANCH || echo "Head branch fetch failed"
         
         
                     # Check if both HEAD and BASE branches exist in the submodule
