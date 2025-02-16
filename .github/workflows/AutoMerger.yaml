@@ -21,15 +21,13 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com:"
           git config --global url."https://${{ secrets.TOKEN }}@github.com".insteadOf "https://github.com"
 
       - name: Merge HEAD into BASE from Deepest Submodules Up
         run: |
-          # BASE_BRANCH=${{ github.event.pull_request.base.ref }}
-          # HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
-          BASE_BRANCH=main
-          HEAD_BRANCH=dev
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
           echo "Pull request merged from: $HEAD_BRANCH → $BASE_BRANCH"
 
           # Get all submodule paths sorted by depth (deepest first)
