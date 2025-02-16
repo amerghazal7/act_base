@@ -52,7 +52,7 @@ jobs:
 
               # Recursively process nested submodules first
               git submodule update --init --recursive
-              git submodule foreach --quiet '
+              git submodule foreach --quiet `
                 # Get all submodule paths sorted by depth (deepest first)
                 SUBSUBMODULES=$(git config --file .gitmodules --get-regexp path | awk '{print $2}' | tac)
                 
@@ -94,7 +94,7 @@ jobs:
                   SUB_PATH="$SUB"
                   merge_submodules "$SUB_PATH"
                 done
-              '
+              `
               commit_and_push_parent "$SUBMODULE_PATH"
 
               if ! git merge origin/$HEAD_BRANCH --no-edit; then
