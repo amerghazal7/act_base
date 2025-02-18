@@ -62,7 +62,7 @@ jobs:
                 merge_submodules "$SUB_PATH"
               done
 
-              if [ ${#SUBMODULES[@]} ]; then
+              if [ -n "$SUBMODULES" ]; then
                 commit_and_push_parent "$SUBMODULE_PATH"
               fi
 
