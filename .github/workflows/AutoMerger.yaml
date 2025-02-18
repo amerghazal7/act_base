@@ -61,8 +61,10 @@ jobs:
                 SUB_PATH="$SUB"
                 merge_submodules "$SUB_PATH"
               done
-              
-              commit_and_push_parent "$SUBMODULE_PATH"
+
+              if [ ${#SUBMODULES[@]} -gt 0 ]; then
+                commit_and_push_parent "$SUBMODULE_PATH"
+              fi
 
               if ! git merge origin/$HEAD_BRANCH --allow-unrelated-histories --no-edit; then
                 echo "❌ Merge conflict detected in $SUBMODULE_PATH/$BASE_BRANCH. Aborting process!"
@@ -85,7 +87,9 @@ jobs:
 
             git add .
             git commit -m "Updated submodule $SUBMODULE_PATH after merging $HEAD_BRANCH into $BASE_BRANCH in its submodules"
-            git push origin $BASE_BRANCH
+            echo "Parent changes comitted in $SUBMODULE_PATH"
+            git push -f origin $BASE_BRANCH
+            echo "Parent changes pushed in $SUBMODULE_PATH"
           }
 
           merge_submodules "."
