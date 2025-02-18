@@ -33,6 +33,8 @@ jobs:
 
           merge_submodules() {
             local SUBMODULE_PATH=$1
+            local CURR=${PWD}
+            echo "Current path: $CURR"
             cd "$SUBMODULE_PATH"
             echo "Processing submodule: $SUBMODULE_PATH"            
 
@@ -78,18 +80,19 @@ jobs:
               echo "Skipping submodule: $SUBMODULE_PATH as one or both branches are missing."
             fi
             
-            cd ..
+            cd $CURR
           }
 
           commit_and_push_parent() {
             local SUBMODULE_PATH=$1
             echo "Committing submodule update in parent: $SUBMODULE_PATH"
-
-            git add .
-            git commit -m "Updated submodule $SUBMODULE_PATH after merging $HEAD_BRANCH into $BASE_BRANCH in its submodules"
-            echo "Parent changes comitted in $SUBMODULE_PATH"
-            git push -f origin $BASE_BRANCH
-            echo "Parent changes pushed in $SUBMODULE_PATH"
+            if [[ $(git status --porcelain) ]]; then
+              git add .
+              git commit -m "Updated submodule $SUBMODULE_PATH after merging $HEAD_BRANCH into $BASE_BRANCH in its submodules"
+              echo "Parent changes comitted in $SUBMODULE_PATH"
+              git push -f origin $BASE_BRANCH
+              echo "Parent changes pushed in $SUBMODULE_PATH"
+            fi
           }
 
           merge_submodules "."
