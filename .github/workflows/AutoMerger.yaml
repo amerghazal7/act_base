@@ -16,7 +16,7 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.TOKEN }}
-
+          fetch-depth: 0
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
