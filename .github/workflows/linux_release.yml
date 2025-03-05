@@ -1,16 +1,10 @@
 name: Linux Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [created]
     paths-ignore:
-      - 'docs/**'
-  pull_request:
-    branches:
-    - '*'
-    paths-ignore:
-      - 'docs/**'
+      - 'docs/**'      
 
 defaults:
   run:
@@ -104,12 +98,7 @@ jobs:
 
       - name: Publish artifact to GitHub release
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ runner.temp }}/shadow_build_dir/package/${{ env.ARTIFACT }}
-          tag_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-          make_latest: true
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} ${{ runner.temp }}/shadow_build_dir/package/${{ env.ARTIFACT }}
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}

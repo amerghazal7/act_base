@@ -108,9 +108,8 @@ jobs:
           overwrite: true
 
       - name: Publish artifact to GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ runner.temp }}/shadow_build_dir/package/${{ env.ARTIFACT }}
-          make_latest: true
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} ${{ runner.temp }}/shadow_build_dir/package/${{ env.ARTIFACT }}
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
