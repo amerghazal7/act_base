@@ -1,8 +1,8 @@
 name: Linux Release
 
 on:
-  push:
-  ` branch:
+  push:  
+  ` branches:
       - 'main'
     tags:
       - 'v*'
