@@ -3,9 +3,6 @@ name: Android 32/64-bit Release
 
 on:
   push:
-    branches:
-      - 'main'
-      - 'Stable*'
     tags:
       - 'v*'
     paths-ignore:
@@ -154,4 +151,4 @@ jobs:
           prerelease: false
           make_latest: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
