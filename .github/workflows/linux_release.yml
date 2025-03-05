@@ -6,8 +6,6 @@ on:
       - 'v*'
     paths-ignore:
       - 'docs/**'
-    branches:
-      - 'main'
   pull_request:
     branches:
     - '*'

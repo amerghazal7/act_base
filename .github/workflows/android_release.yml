@@ -143,7 +143,7 @@ jobs:
 
       - name: Publish artifact to GitHub release
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           files: ${{ runner.temp }}/shadow_build_dir/package/${{ env.ARTIFACT }}
           tag_name: ${{ github.ref }}
