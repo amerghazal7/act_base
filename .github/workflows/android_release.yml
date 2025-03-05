@@ -4,7 +4,7 @@ name: Android 32/64-bit Release
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
       - 'Stable*'
     tags:
       - 'v*'
